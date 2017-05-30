@@ -1,6 +1,6 @@
 namespace CQRSKata
 {
-    public class MoveCommand
+    public class MoveCommand : ICommand
     {
         private Direction _direction;
 
