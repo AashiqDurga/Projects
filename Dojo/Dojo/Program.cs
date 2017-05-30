@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Text;
@@ -97,6 +98,13 @@ namespace CQRSKata
         public void DispatchCommand(ICommand command)
         {
             //ToDo: Find all types that implement ICommandHandler
+            var type = typeof(ICommandHandler<>);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
+                .Where(p => p.GetInterfaces().Any(ip=> ip.IsGenericType &&
+                    ip.GetGenericTypeDefinition() == type && ip.GetGenericArguments().Contains(command.GetType())) );
+
+
+            //types.FirstOrDefault(x => x.GenericTypeArguments)
             if (command is MoveCommand)
             {
                 var commandHandler = new MoveCommandHandler();
