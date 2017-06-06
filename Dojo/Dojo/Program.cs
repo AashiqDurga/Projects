@@ -13,17 +13,20 @@ namespace CQRSKata
     {
         static void Main(string[] args)
         {
-            var moveCommand = new MoveCommand(Direction.Down);
-            var moveCommandHandler = new MoveCommandHandler();
-            var collectCommand = new CollectCommand(Material.Air);
-            var collectCommandHandler = new CollectCommandHandler();
-            var destroyCommand = new DestroyCommand(Target.Sandile);
-            var destroyCommandHandler = new DestroyCommandHandler();
+
             var commandDispatcher = new CommandDispatcher();
-            
-            collectCommandHandler.Execute(collectCommand);
-            commandDispatcher.DispatchCommand(moveCommand);
-            destroyCommandHandler.Execute(destroyCommand);
+            var queryDispatcher = new QueryDispatcher();
+
+            var results = queryDispatcher.DispatchQuery<MoveQuery,List<Direction>>(new MoveQuery());
+
+            foreach (var result in results)
+            {
+                Console.WriteLine(result);
+            }
+
+            commandDispatcher.DispatchCommand(new CollectCommand(Material.Air));
+            commandDispatcher.DispatchCommand(new MoveCommand(Direction.Down));
+            commandDispatcher.DispatchCommand(new DestroyCommand(Target.Sandile));
         }
     }
 
@@ -56,7 +59,7 @@ namespace CQRSKata
         }
     }
 
-    public class DestroyCommand
+    public class DestroyCommand : ICommand
     {
         public DestroyCommand(Target target)
         {
@@ -90,26 +93,67 @@ namespace CQRSKata
 
     public interface ICommandDispatcher
     {
-        void DispatchCommand(ICommand command);
+        void DispatchCommand<T>(T command) where T : ICommand;
     }
 
     public class CommandDispatcher : ICommandDispatcher
     {
-        public void DispatchCommand(ICommand command)
+        public void DispatchCommand<T>(T command) where T : ICommand
         {
-            //ToDo: Find all types that implement ICommandHandler
-            var type = typeof(ICommandHandler<>);
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
-                .Where(p => p.GetInterfaces().Any(ip=> ip.IsGenericType &&
-                    ip.GetGenericTypeDefinition() == type && ip.GetGenericArguments().Contains(command.GetType())) );
+            var handlerTypes = GetHandlers(command.GetType());
 
-
-            //types.FirstOrDefault(x => x.GenericTypeArguments)
-            if (command is MoveCommand)
+            foreach (var handlerType in handlerTypes)
             {
-                var commandHandler = new MoveCommandHandler();
-                commandHandler.Execute((MoveCommand)command);
+                var handler = (ICommandHandler<T>)Activator.CreateInstance(handlerType);
+
+                handler.Execute(command);
             }
+        }
+
+        private IEnumerable<Type> GetHandlers(Type commandType)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
+                .Where(p => p.GetInterfaces().Any(ip => ip.IsGenericType &&
+                    ip.GetGenericTypeDefinition() == typeof(ICommandHandler<>) && ip.GetGenericArguments().Contains(commandType)));
+        }
+    }
+
+    public class MoveQuery: IQuery<List<Direction>>
+    {
+        public Direction Direction { get; set; } 
+    }
+
+    public class MoveQueryHandler : IQueryHandler<MoveQuery, List<Direction>>
+    {
+        public List<Direction> Execute(MoveQuery query)
+        {
+            return new List<Direction>() { Direction.Up, Direction.Down };
+        }
+    }
+
+    public interface IQuery<TResult>
+    {
+    }
+
+    public interface IQueryHandler<in TQuery, out TResult> where TQuery : IQuery<TResult>
+    {
+        TResult Execute(TQuery query);
+    }
+
+    public class QueryDispatcher
+    {
+        public TResult DispatchQuery<TQuery, TResult>(TQuery query) where TQuery : IQuery<TResult>
+        {
+            var handlerType = GetHandlers(query.GetType()).First();
+            var handler = (IQueryHandler<TQuery, TResult>)Activator.CreateInstance(handlerType);
+            return handler.Execute(query);
+        }
+
+        private IEnumerable<Type> GetHandlers(Type queryType)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
+                .Where(p => p.GetInterfaces().Any(ip => ip.IsGenericType &&
+                    ip.GetGenericTypeDefinition() == typeof(IQueryHandler<,>) && ip.GetGenericArguments().Contains(queryType)));
         }
     }
 }

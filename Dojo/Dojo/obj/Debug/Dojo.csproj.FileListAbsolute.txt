@@ -11,3 +11,16 @@ D:/DevWork/Dojo/Dojo/obj/Debug/Dojo.pdb
 /Users/aashiqdurga/src/KeyBlade/Projects/Dojo/Dojo/obj/Debug/Dojo.csproj.CoreCompileInputs.cache
 /Users/aashiqdurga/src/KeyBlade/Projects/Dojo/Dojo/obj/Debug/Dojo.exe
 /Users/aashiqdurga/src/KeyBlade/Projects/Dojo/Dojo/obj/Debug/Dojo.pdb
+Y:/dev/dojo/Dojo/Dojo/bin/Debug/Dojo.exe.config
+Y:/dev/dojo/Dojo/Dojo/bin/Debug/Dojo.exe
+Y:/dev/dojo/Dojo/Dojo/bin/Debug/Dojo.pdb
+Y:/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.csprojResolveAssemblyReference.cache
+Y:/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.exe
+Y:/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.pdb
+/Users/adriaanp/dev/dojo/Dojo/Dojo/bin/Debug/Dojo.exe.config
+/Users/adriaanp/dev/dojo/Dojo/Dojo/bin/Debug/Dojo.exe
+/Users/adriaanp/dev/dojo/Dojo/Dojo/bin/Debug/Dojo.pdb
+/Users/adriaanp/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.csprojResolveAssemblyReference.cache
+/Users/adriaanp/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.csproj.CoreCompileInputs.cache
+/Users/adriaanp/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.exe
+/Users/adriaanp/dev/dojo/Dojo/Dojo/obj/Debug/Dojo.pdb

@@ -1,6 +1,6 @@
 namespace CQRSKata
 {
-    public class CollectCommand
+    public class CollectCommand: ICommand
     {
         private Material _material;
 
